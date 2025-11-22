@@ -33,9 +33,9 @@ def calculate_entropy(text: str) -> float:
     return -sum(p * log2(p) for p in probability)
 
 # ------------------------------
-# Main analysis function
+# PHISH CHECK FUNCTION (for app.py)
 # ------------------------------
-def analyze_input(data: str):
+def phish_check(data: str):
     risk_score = 0
     details = []
 
@@ -64,7 +64,7 @@ def analyze_input(data: str):
 
     # Suspicious TLDs
     bad_tlds = [".zip", ".xyz", ".top", ".tk", ".click"]
-    if any(url.endswith(tld) for tld in bad_tlds for url in urls):
+    if any(url.endswith(tld) for url in urls for tld in bad_tlds):
         risk_score += 20
         details.append("⚠️ Suspicious TLD detected.")
 
@@ -76,12 +76,11 @@ def analyze_input(data: str):
         "app1e": "apple",
         "m1crosoft": "microsoft"
     }
-
     for url in urls:
         for typo, legit in typo_patterns.items():
             if typo in url.lower():
                 risk_score += 30
-                details.append(f"⚠️ Typosquatting detected: '{typo}' instead of '{legit}'.")
+                details.append(f"⚠️ Typosquatting detected: '{typo}' instead of '{legit}'")
 
     # Email domain check
     safe_domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"]
@@ -106,18 +105,14 @@ def analyze_input(data: str):
     entropy = calculate_entropy(data)
     if entropy > 4.0:
         risk_score += 15
-        details.append(f"⚠️ High entropy detected ({entropy:.2f}).")
+        details.append(f"⚠️ High entropy detected ({entropy:.2f})")
 
     # Final verdict
     if risk_score >= 70:
-        verdict = "🛑 HIGH RISK — Likely PHISHING"
+        verdict = "🔴 HIGH RISK — Likely PHISHING"
     elif risk_score >= 40:
         verdict = "🟧 MEDIUM RISK — Suspicious"
     else:
         verdict = "🟩 LOW RISK — Likely Safe"
 
-    return {
-        "risk_score": risk_score,
-        "verdict": verdict,
-        "details": details
-    }
+    return risk_score, verdict, "high" if risk_score >= 70 else "moderate" if risk_score >= 40 else "low", details

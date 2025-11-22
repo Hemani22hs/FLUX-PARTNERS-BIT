@@ -1,7 +1,6 @@
 # app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from logic import phish_check
 import urllib.parse
 import re
 import random # Used for simulating external API call results for the hackathon

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phishing Guard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 15px 0;
+      border-radius: 5px;
+      border: 1px solid gray;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #1976D2;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Phishing Guard</h2>
+
+    <input id="urlInput" placeholder="Enter a URL to check..." />
+
+    <button onclick="checkURL()">Check URL Safety</button>
+
+    <p id="result"></p>
+  </div>
+
+  <script>
+    function checkURL() {
+      const url = document.getElementById("urlInput").value;
+      
+      if (!url) {
+        alert("Please enter a URL");
+        return;
+      }
+
+      document.getElementById("result").innerText =
+        "🔍 Checking safety for: " + url;
+    }
+  </script>
+<script src="frontend.js"></script>
+
+</body>
+</html>

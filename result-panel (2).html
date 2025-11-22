@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="result-panel.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PhisGuard — Scan Result</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#0f62fe;
+    --danger:#ef4444;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --glass: rgba(255,255,255,0.7);
+    --radius:12px;
+    --fw-heading: 700;
+    --fw-normal: 400;
+    --max-width:1100px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,#eef2ff 0%, var(--bg) 100%);
+    color:#0f172a;
+    padding:28px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:var(--max-width);
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:56px;height:56px;border-radius:10px;
+    background:linear-gradient(135deg,#0f62fe,#7c3aed);
+    display:flex;align-items:center;justify-content:center;color:white;font-weight:800;
+    box-shadow:0 6px 18px rgba(12,24,60,0.08);
+  }
+  h1{margin:0;font-size:20px;font-weight:var(--fw-heading)}
+  p.lead{margin:0;color:var(--muted);font-size:13px}
+
+  main{
+    display:grid;
+    grid-template-columns: 360px 1fr;
+    gap:18px;
+  }
+
+  /* left card */
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    box-shadow:0 6px 20px rgba(16,24,40,0.06);
+  }
+
+  .summary h2{font-size:16px;margin:0 0 8px 0}
+  .url{
+    font-size:13px;color:#0f172a;margin-bottom:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:600;font-size:13px;
+  }
+  .badge.safe{background:rgba(16,185,129,0.12);color:var(--success)}
+  .badge.suspicious{background:rgba(245,158,11,0.12);color:var(--warning)}
+  .badge.malicious{background:rgba(239,68,68,0.08);color:var(--danger)}
+
+  .meter{
+    display:flex;align-items:center;gap:12px;margin-top:14px;
+  }
+  .meter .bar{
+    height:12px;background:#f1f5f9;border-radius:999px;flex:1;padding:2px;
+    display:flex;align-items:center;
+  }
+  .meter .progress{
+    height:100%;border-radius:999px;background:linear-gradient(90deg,#16a34a,#06b6d4);width:0%;
+    transition:width 900ms cubic-bezier(.2,.9,.2,1);
+  }
+  .meta{color:var(--muted);font-size:13px;margin-top:12px}
+
+  /* right column: details */
+  .details{
+    display:flex;flex-direction:column;gap:12px;
+  }
+
+  .checks{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;
+  }
+  .check{
+    background:linear-gradient(180deg, rgba(15,98,254,0.03), rgba(124,58,237,0.01));
+    border-radius:10px;padding:10px;
+    min-height:64px;
+  }
+  .check h3{margin:0;font-size:13px}
+  .check p{margin:6px 0 0;color:var(--muted);font-size:12px}
+
+  .actions{display:flex;gap:10px;align-items:center;margin-top:6px}
+  .btn{
+    padding:10px 14px;border-radius:10px;background:var(--accent);color:white;border:none;font-weight:600;cursor:pointer;
+    box-shadow:0 6px 16px rgba(15,98,254,0.12);
+  }
+  .btn.ghost{background:transparent;color:var(--accent);box-shadow:none;border:1px solid rgba(15,98,254,0.12)}
+  .btn.small{padding:8px 10px;font-size:13px}
+
+  .log{
+    background:linear-gradient(180deg,#ffffff, #fbfdff);
+    border-radius:10px;padding:12px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+    color:#0b1220;font-size:13px;min-height:120px;overflow:auto;border:1px solid rgba(11,18,32,0.04)
+  }
+
+  footer{margin-top:16px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center}
+
+  /* small screens */
+  @media (max-width:880px){
+    main{grid-template-columns: 1fr}
+  }
+
+  /* subtle shine */
+  .logo::after{
+    content:"";position:absolute;margin-left:4px;margin-top:4px;width:10px;height:10px;border-radius:50%;opacity:0.12;background:linear-gradient(180deg,white,transparent);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand" style="position:relative">
+        <div class="logo">PG</div>
+        <div>
+          <h1>PhisGuard — Scan Result</h1>
+          <p class="lead">Clear, actionable results for quick decisions</p>
+        </div>
+      </div>
+      <div style="margin-left:auto;color:var(--muted);font-size:13px">
+        <div id="last-checked">Last scanned: —</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT: Summary -->
+      <aside class="card summary">
+        <h2>Summary</h2>
+        <div class="url" id="url">URL: —</div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div id="verdictBadge" class="badge safe">Verdict</div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--muted)">Score</div>
+            <div style="font-weight:800;font-size:18px" id="scoreText">—</div>
+          </div>
+        </div>
+
+        <div class="meter" style="margin-top:12px">
+          <div class="bar" aria-hidden="true"><div id="progress" class="progress"></div></div>
+          <div style="width:56px;font-size:12px;color:var(--muted);text-align:right" id="scorePercent">0%</div>
+        </div>
+
+        <div class="meta" style="margin-top:12px">
+          <div>Scan time: <strong id="scanTime">—</strong></div>
+          <div style="margin-top:6px">Engine version: <strong id="engineVer">v1.0</strong></div>
+        </div>
+
+        <div class="actions" style="margin-top:14px">
+          <button class="btn" id="rescanBtn">Rescan</button>
+          <button class="btn ghost small" id="exportBtn">Export JSON</button>
+          <button class="btn ghost small" id="shareBtn">Share</button>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Details -->
+      <section class="details">
+        <div class="card">
+          <h2 style="margin-bottom:12px">Detailed checks</h2>
+          <div class="checks" id="checks">
+            <!-- check items inserted by JS -->
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin-bottom:8px">Actionable insights</h2>
+          <div style="display:flex;gap:12px;flex-direction:column">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <div style="font-weight:700;color:var(--muted);width:120px">Why flagged</div>
+              <div style="color:var(--muted)">Phishing indicators matched in domain age, suspicious redirects and a low reputation score. Recommended: block, report and notify users.</div>
+            </div>
+
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px">
+              <div style="font-weight:700;color:var(--muted);width:120px">Suggested action</div>
+              <div>
+                <ul style="margin:0;padding-left:18px;color:var(--muted)">
+                  <li>Quarantine the link and add to watchlist</li>
+                  <li>Notify admin & affected users</li>
+                  <li>Request full scan (deep crawl)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <button class="btn" id="contactBtn">Report to Admin</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin-bottom:8px">Raw log</h2>
+          <div id="log" class="log">—</div>
+        </div>
+
+      </section>
+    </main>
+
+    <footer>
+      <div>PhisGuard • Hackathon edition</div>
+      <div style="color:var(--muted)">v0.1 • Frontend prototype</div>
+    </footer>
+  </div>
+
+<script>
+  // simulated data - replace with real scan result JSON
+  const sample = {
+    url: "http://example-phish.test/login",
+    verdict: "malicious", // safe | suspicious | malicious
+    score: 82, // 0..100
+    scannedAt: new Date().toLocaleString(),
+    engine: "phisguard-core v0.9",
+    checks: [
+      {name:"Domain age", result:"old domain unknown", score: 20, info:"Domain registered 2 days ago"},
+      {name:"SSL / Certificate", result:"invalid cert", score: 10, info:"Self-signed certificate"},
+      {name:"Reputation", result:"low", score: 18, info:"Reputation score low on 3 sources"},
+      {name:"Redirects", result:"suspicious", score: 15, info:"Multiple chained redirects to other domains"},
+      {name:"Form harvesting", result:"detected", score: 19, info:"Login form captures credentials"},
+    ],
+    logs: [
+      "[00:00:00] Starting quick scan...",
+      "[00:00:01] Checking domain age: 2 days old (suspicious)",
+      "[00:00:01] SSL certificate: self-signed (fail)",
+      "[00:00:02] Reputation: 3 negative sources (fail)",
+      "[00:00:02] Final verdict: malicious"
+    ]
+  };
+
+  function render(data){
+    document.getElementById('url').textContent = data.url;
+    const badge = document.getElementById('verdictBadge');
+    const scoreText = document.getElementById('scoreText');
+    const progress = document.getElementById('progress');
+    const scorePercent = document.getElementById('scorePercent');
+    const scanTime = document.getElementById('scanTime');
+    const engineVer = document.getElementById('engineVer');
+    const checksEl = document.getElementById('checks');
+    const logEl = document.getElementById('log');
+    const lastChecked = document.getElementById('last-checked');
+
+    // verdict badge style
+    badge.className = 'badge ' + (data.verdict === 'safe' ? 'safe' : data.verdict === 'suspicious' ? 'suspicious' : 'malicious');
+    badge.textContent = data.verdict.toUpperCase();
+
+    scoreText.textContent = data.score + '/100';
+    progress.style.width = Math.min(100, Math.max(0, data.score)) + '%';
+    scorePercent.textContent = Math.min(100, Math.max(0, data.score)) + '%';
+    scanTime.textContent = data.scannedAt;
+    engineVer.textContent = data.engine;
+    lastChecked.textContent = 'Last scanned: ' + data.scannedAt;
+
+    // checks
+    checksEl.innerHTML = '';
+    data.checks.forEach(c=>{
+      const box = document.createElement('div');
+      box.className = 'check';
+      box.innerHTML = <h3>${c.name}</h3><p>${c.result}</p><div style="margin-top:8px;font-size:12px;color:var(--muted)">${c.info}</div>;
+      checksEl.appendChild(box);
+    });
+
+    // logs
+    logEl.textContent = data.logs.join("\n");
+  }
+
+  // initial render with animation
+  document.addEventListener('DOMContentLoaded', ()=>{
+    render({
+      ...sample,
+      score: 0,
+      scannedAt: "Scanning..."
+    });
+
+    // simulate progress
+    let i=0; const interval = setInterval(()=>{
+      i += Math.floor(Math.random()*18)+8;
+      if(i >= sample.score){ i = sample.score; render({...sample, score: i}); clearInterval(interval); }
+      else render({...sample, score: i});
+    }, 300);
+  });
+
+  // basic actions
+  document.getElementById('rescanBtn').addEventListener('click', ()=>{
+    // quick UI: simulate rescanning
+    render({...sample, score: 0, scannedAt: 'Rescanning...'});
+    let i=0; const interval = setInterval(()=>{
+      i += Math.floor(Math.random()*18)+8;
+      if(i >= sample.score){ i = sample.score; render({...sample, score: i, scannedAt: new Date().toLocaleString()}); clearInterval(interval); }
+      else render({...sample, score: i});
+    }, 240);
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(sample, null, 2)], {type:'application/json'}));
+    a.download = 'scan-result.json';
+    a.click();
+  });
+
+  document.getElementById('shareBtn').addEventListener('click', ()=>{
+    // copy URL to clipboard
+    navigator.clipboard?.writeText(sample.url).then(()=> alert('URL copied to clipboard'));
+  });
+
+  document.getElementById('contactBtn').addEventListener('click', ()=>{
+    alert('Report sent to admin (mock).');
+  });
+</script>
+</body>
+</html>
